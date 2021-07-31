@@ -4,6 +4,8 @@ import {Product} from './domain/product';
 import {ProductService} from './services/productservice';
 import {ContactDto} from "./domain/contact.dto";
 import {ContactService} from "./services/contact.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {RelationDto} from "./domain/relation.dto";
 
 @Component({
     selector: 'app-root',
@@ -13,13 +15,15 @@ import {ContactService} from "./services/contact.service";
 })
 export class AppComponent implements OnInit {
 
+    detailsForm: FormGroup;
+
     productDialog: boolean;
 
-    products: Product[];
+    relationship: RelationDto;
 
     product: Product;
 
-    selectedProducts: Product[];
+    foundRelationship: boolean;
 
     submitted: boolean;
 
@@ -27,18 +31,29 @@ export class AppComponent implements OnInit {
 
     contactList: ContactDto[];
 
+    wantRelationship: boolean;
+
     constructor(private productService: ProductService, private messageService: MessageService,
                 private confirmationService: ConfirmationService, private contactService: ContactService) {
     }
 
     ngOnInit() {
         this.getContactList(null, null);
+        this.detailsForm = this.createDetailsForm();
 
         this.statuses = [
             {label: 'INSTOCK', value: 'instock'},
             {label: 'LOWSTOCK', value: 'lowstock'},
             {label: 'OUTOFSTOCK', value: 'outofstock'}
         ];
+    }
+
+    protected createDetailsForm() {
+        return new FormGroup({
+                firstName: new FormControl('', Validators.compose([Validators.required])),
+                lastName: new FormControl('', Validators.compose([Validators.required])),
+            }
+        )
     }
 
     getContactList(code: string, value: string) {
@@ -56,14 +71,36 @@ export class AppComponent implements OnInit {
         console.log("Hello");
     }
 
-    openNew() {
-        this.product = {};
+    showDetails(contact: any) {
         this.submitted = false;
         this.productDialog = true;
+        this.detailsForm.controls.firstName.setValue(contact.firstName);
+        this.detailsForm.controls.lastName.setValue(contact.lastName);
+        this.contactService.getRelation(contact.username).subscribe(
+            data => {
+                this.relationship = data;
+                this.foundRelationship = true;
+            }, error => {
+                console.error(error);
+                this.foundRelationship = false;
+            }
+        )
     }
 
     hideDialog() {
         this.productDialog = false;
         this.submitted = false;
+    }
+
+    enableRelationshipSave(event: any) {
+        console.log(event);
+        this.wantRelationship = event.checked;
+        if (this.wantRelationship) {
+            this.detailsForm.addControl('relation', new FormControl('', Validators.compose([Validators.required])));
+            this.detailsForm.addControl('acquaintanceDate', new FormControl('', Validators.compose([Validators.required])));
+        } else {
+            this.detailsForm.removeControl('relation');
+            this.detailsForm.removeControl('acquaintanceDate');
+        }
     }
 }

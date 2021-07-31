@@ -11,19 +11,27 @@
 <p-card>
     <p-dataView #dv [value]="contactList" emptyMessage="No contacts">
         <ng-template let-data pTemplate="listItem" class="p-grid">
-            <div class="p-col-12">
+            <div class="p-col-12" *ngIf="data.username !== 'mwarrick0'">
                 <div class="p-grid">
-                    <div class="p-col-2"><b>Username:</b></div>
-                    <div class="p-col-2">{{data.username}}</div>
-                    <div class="p-col-2"><b>First Name:</b></div>
-                    <div class="p-col-2">{{data.firstName}}</div>
-                    <div class="p-col-2"><b>Last Name:</b></div>
-                    <div class="p-col-2">{{data.lastName}}</div>
-                    <div class="p-col-2"><b>Email:</b></div>
-                    <div class="p-col-2">{{data.email}}</div>
-                    <div class="p-col-2"><b>Location:</b></div>
-                    <div class="p-col-2">N/A</div>
-                </div>dd
+                    <div class="p-col-9">
+                        <div class="p-grid">
+                            <div class="p-col-2"><b>Username:</b></div>
+                            <div class="p-col-2">{{data.username}}</div>
+                            <div class="p-col-2"><b>First Name:</b></div>
+                            <div class="p-col-2">{{data.firstName}}</div>
+                            <div class="p-col-2"><b>Last Name:</b></div>
+                            <div class="p-col-2">{{data.lastName}}</div>
+                            <div class="p-col-2"><b>Email:</b></div>
+                            <div class="p-col-2">{{data.email}}</div>
+                            <div class="p-col-2"><b>Location:</b></div>
+                            <div class="p-col-2">N/A</div>
+                        </div>
+                    </div>
+                    <div class="p-col-3">
+                        <button pButton pRipple label="Details" icon="pi pi-times"
+                                (click)="showDetails(data)"></button>
+                    </div>
+                </div>
             </div>
         </ng-template>
     </p-dataView>
@@ -32,6 +40,39 @@
 
 <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
           styleClass="p-fluid">
+
+    <form [formGroup]="detailsForm">
+        <div class="p-field">
+            <label for="firstName">First Name</label>
+            <input id="firstName" formControlName="firstName" pInputText/>
+        </div>
+        <div class="p-field">
+            <label for="lastName">Last Name</label>
+            <input id="lastName" formControlName="lastName" pInputText/>
+        </div>
+        <div *ngIf="foundRelationship">
+            <b>Relationship Data</b>
+            <hr>
+        </div>
+        <div class="p-field-checkbox" *ngIf="!foundRelationship">
+            <p-checkbox label="I have a relationship with this person" (onChange)="enableRelationshipSave($event)" binary="true" inputId="binary"></p-checkbox>
+        </div>
+        <div *ngIf="wantRelationship">
+            <div class="p-field">
+                <label for="relation">Relation</label>
+                <input id="relation" formControlName="relation" pInputText/>
+            </div>
+            <div class="p-field">
+                <label for="acquaintanceDate">Acquaintance Date</label>
+                <p-calendar appendTo="body" id="acquaintanceDate" formControlName="acquaintanceDate"
+                            dateFormat="yy-mm-dd"></p-calendar>
+            </div>
+        </div>
+        <div *ngIf="foundRelationship">
+            <b>Relationship Data</b>
+            <hr>
+        </div>
+    </form>
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
