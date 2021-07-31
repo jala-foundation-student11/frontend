@@ -1,0 +1,42 @@
+<p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+        <b>My Contacts</b>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+        v0.0.0
+    </ng-template>
+</p-toolbar>
+
+<p-card>
+    <p-dataView #dv [value]="contactList" emptyMessage="No contacts">
+        <ng-template let-data pTemplate="listItem" class="p-grid">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-2"><b>Username:</b></div>
+                    <div class="p-col-2">{{data.username}}</div>
+                    <div class="p-col-2"><b>First Name:</b></div>
+                    <div class="p-col-2">{{data.firstName}}</div>
+                    <div class="p-col-2"><b>Last Name:</b></div>
+                    <div class="p-col-2">{{data.lastName}}</div>
+                    <div class="p-col-2"><b>Email:</b></div>
+                    <div class="p-col-2">{{data.email}}</div>
+                    <div class="p-col-2"><b>Location:</b></div>
+                    <div class="p-col-2">N/A</div>
+                </div>dd
+            </div>
+        </ng-template>
+    </p-dataView>
+</p-card>
+
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
+          styleClass="p-fluid">
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
