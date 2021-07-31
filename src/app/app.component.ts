@@ -6,6 +6,7 @@ import {ContactDto} from "./domain/contact.dto";
 import {ContactService} from "./services/contact.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RelationDto} from "./domain/relation.dto";
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'app-root',
@@ -30,6 +31,8 @@ export class AppComponent implements OnInit {
     statuses: any[];
 
     contactList: ContactDto[];
+
+    selectedContact: ContactDto;
 
     wantRelationship: boolean;
 
@@ -67,16 +70,41 @@ export class AppComponent implements OnInit {
         )
     }
 
-    saveProduct() {
-        console.log("Hello");
+    saveRelationship() {
+        if (this.detailsForm.invalid) {
+            this.submitted = true;
+            return;
+        }
+        const contactUsername = this.selectedContact.username;
+        const relation = this.detailsForm.get('relation').value;
+        const acquaintanceDate = this.changeDateToString(this.detailsForm.get('acquaintanceDate').value);
+        this.prepareSaveBody(relation, acquaintanceDate, contactUsername).subscribe(
+            data => {
+                this.messageService.add({severity:'success', summary: 'Success', detail: data.message});
+                this.productDialog = false;
+            }, error => {
+                console.error(error);
+            }
+        );
+    }
+
+    prepareSaveBody(relationSrc: string, acquaintanceDateSrc: string, contactUsernameSrc: string): Observable<any> {
+        const body = {
+            contactUsername: contactUsernameSrc,
+            requestUsername: 'mwarrick0',
+            relation: relationSrc,
+            acquaintanceDate: acquaintanceDateSrc,
+        }
+        return this.contactService.saveRelation(body);
     }
 
     showDetails(contact: any) {
         this.submitted = false;
         this.productDialog = true;
-        this.detailsForm.controls.firstName.setValue(contact.firstName);
-        this.detailsForm.controls.lastName.setValue(contact.lastName);
-        this.contactService.getRelation(contact.username).subscribe(
+        this.selectedContact = contact;
+        this.detailsForm.controls.firstName.setValue(this.selectedContact.firstName);
+        this.detailsForm.controls.lastName.setValue(this.selectedContact.lastName);
+        this.contactService.getRelation(this.selectedContact.username).subscribe(
             data => {
                 this.relationship = data;
                 this.foundRelationship = true;
@@ -102,5 +130,9 @@ export class AppComponent implements OnInit {
             this.detailsForm.removeControl('relation');
             this.detailsForm.removeControl('acquaintanceDate');
         }
+    }
+
+    private changeDateToString(date: Date) {
+        return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
     }
 }

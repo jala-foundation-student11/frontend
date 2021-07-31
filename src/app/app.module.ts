@@ -20,6 +20,7 @@ import {DataViewModule} from "primeng/dataview";
 import {CardModule} from "primeng/card";
 import {CheckboxModule} from "primeng/checkbox";
 import {CalendarModule} from "primeng/calendar";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
     declarations: [
@@ -44,7 +45,8 @@ import {CalendarModule} from "primeng/calendar";
         CardModule,
         ReactiveFormsModule,
         CheckboxModule,
-        CalendarModule
+        CalendarModule,
+        ToastModule
     ],
     providers: [ConfirmationService],
     bootstrap: [AppComponent]

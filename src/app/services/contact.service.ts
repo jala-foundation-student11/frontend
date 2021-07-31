@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {ContactDto} from "../domain/contact.dto";
 import {RelationDto} from "../domain/relation.dto";
+import {GenericDto} from "../domain/generic.dto";
 
 @Injectable({
     providedIn: 'root'
@@ -40,5 +41,11 @@ export class ContactService {
         const url = "http://localhost:8880/api/v1/contact/relation?targetUsername=" + targetUsername;
         // @ts-ignore
         return this.http.get<any>(url, this.headers()).pipe(map(res => res as RelationDto))
+    }
+
+    saveRelation(body: any): Observable<any> {
+        const url = "http://localhost:8880/api/v1/contact/relation";
+        // @ts-ignore
+        return this.http.post<any>(url, body, this.headers()).pipe(map(res => res as GenericDto))
     }
 }

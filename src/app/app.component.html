@@ -76,8 +76,8 @@
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+        <button *ngIf="!foundRelationship" pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveRelationship()"></button>
     </ng-template>
 </p-dialog>
 
-<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>
